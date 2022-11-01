@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/d-chosen-one/tgb/internal/creator"
 	"github.com/d-chosen-one/tgb/internal/db"
 	"github.com/d-chosen-one/tgb/internal/model"
 	"github.com/google/uuid"
@@ -26,14 +27,13 @@ func (g gameService) GetAllGames() ([]*model.Game, error) {
 }
 
 func (g gameService) CreateNewGame(gameSettings model.GameSettings) (*model.Game, error) {
-	game := new(model.Game)
+	game := creator.NewGame(gameSettings.GameField)
 	game.Id = uuid.New().String()
 	game.PlayerName = gameSettings.PlayerName
 	game.PlayerRace = gameSettings.PlayerRace
-	game.Fields = createFields(gameSettings)
-	err := g.repository.SaveGame(*game)
+	err := g.repository.SaveGame(game)
 	if err != nil {
 		return nil, err
 	}
-	return game, nil
+	return &game, nil
 }
